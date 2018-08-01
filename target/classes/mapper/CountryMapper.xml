@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+					"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 当mapper接口与xml文件关联的时候，namespace 必须指定接口的名称， 名称是包名加上接口的名称 -->
+<mapper namespace="com.spring.boot.ibatis.mapper.CountryMapper">
+	<select id="selectAll" resultType="Country">
+		select id,countryname,countrycode from country
+	</select>
+</mapper>
