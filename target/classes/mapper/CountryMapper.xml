@@ -3,6 +3,9 @@
 					"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <!-- 当mapper接口与xml文件关联的时候，namespace 必须指定接口的名称， 名称是包名加上接口的名称 -->
 <mapper namespace="com.spring.boot.ibatis.mapper.CountryMapper">
+<!--selectAll 必须在 CountryMapper中存在以selectAll命名的方法 
+resultType 表示映射的java类型
+-->
 	<select id="selectAll" resultType="Country">
 		select id,countryname,countrycode from country
 	</select>

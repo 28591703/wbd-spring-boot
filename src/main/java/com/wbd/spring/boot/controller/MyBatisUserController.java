@@ -1,5 +1,7 @@
 package com.wbd.spring.boot.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -7,15 +9,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spring.boot.ibatis.mapper.SysUserMapper;
 import com.spring.boot.ibatis.mapper.UserMapper;
+import com.wbd.spring.boot.entity.SysUser;
 import com.wbd.spring.boot.entity.User;
-
+/**
+ * mybatis 注解方式
+* <p>Title: MyBatisUserController.java</p>  
+* <p>Description: </p>  
+* @author 朱光和 
+* @date 2018年8月1日
+ */
 @RestController
 public class MyBatisUserController {
 	
 	@Autowired
 	private UserMapper um ;
 	
+	@Autowired
+	private SysUserMapper sum ;
 	
 	@RequestMapping(value="/getUser/{userId}")  
     public User getUser(@PathVariable Integer userId) {  
@@ -64,5 +76,12 @@ public class MyBatisUserController {
     	return "result:"+result;
     } 
     
+    
+  
+    
+    @RequestMapping(value="/getAllSysUser" ,method = RequestMethod.GET) 
+    public  List<SysUser> getAllSysUser() {  
+        return sum.selectAllSysUser();  
+    }  
 
 }

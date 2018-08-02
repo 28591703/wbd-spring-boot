@@ -49,6 +49,8 @@ public class WbdSpringBootApplication {
 	}
 	
 	
+	
+	/****************HTTPS转向********************/
 	@Bean
 	public EmbeddedServletContainerFactory servletContainer() {
 		
