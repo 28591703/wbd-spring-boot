@@ -1,239 +1,471 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 					"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-									
-<!--  一. mapper属性
 
-1. 当mapper接口与xml文件关联的时候，namespace 必须指定接口的名称， 名称是包名加上接口的名称
- -->					
-					
+<!-- 一. mapper属性 1. 当mapper接口与xml文件关联的时候，namespace 必须指定接口的名称， 名称是包名加上接口的名称 -->
+
 <mapper namespace="com.spring.boot.ibatis.mapper.SysUserMapper">
 
-<!--  二.resultMap属性i
-    1.id 表示标识，可以用来引用和继承
-    2.type: 表示映射的java类型
-    3.extends:可以继承其他的resultmap，属性为继承resultmap的id
-    
-                三. resultMap包含的标签
-     1. constructor 构造器：id,arg
-     与，下面的id，result标签一样。
-     2.id 一个id结果，标记结果作为id唯一值，可以帮助提高整体性能
-     3.result注入到java对象属性的普通结果
-     4.association 一个复杂类型的关联
-     5.collection复杂类型的集合
-     6.discriminator 根据结果值来决定使用哪个结果映射
-     7.case基于某些只的映射
-     
- -->
+	<!-- 二.resultMap属性i 1.id 表示标识，可以用来引用和继承 2.type: 表示映射的java类型 3.extends:可以继承其他的resultmap，属性为继承resultmap的id 
+		三. resultMap包含的标签 1. constructor 构造器：id,arg 与，下面的id，result标签一样。 2.id 一个id结果，标记结果作为id唯一值，可以帮助提高整体性能 
+		3.result注入到java对象属性的普通结果 4.association 一个复杂类型的关联 5.collection复杂类型的集合 6.discriminator 
+		根据结果值来决定使用哪个结果映射 7.case基于某些只的映射 -->
 
-<resultMap type="com.wbd.spring.boot.entity.SysUser" id="userMap">
+	<resultMap type="com.wbd.spring.boot.entity.SysUser"
+		id="userMap">
 
-<!-- 四，id,与result的标签  
-   property表示javabean中的字段
-   column表示数据库的字段
-   javaType 一个java类的完全限定名，或者一个类型别名(typealias),如果映射到javabean，mybatis自动判断属性类型
-   如果指定映射到hashmap，则需要明确的指定javatype
-   jdbcType 列对应的数据库类型
--->
- <id property="id" column="id"/>
-	<result property="userName" column="user_name"/>
-	<result property="userPassword" column="user_password"/>
-	<result property="userEmail" column="user_email"/>
-	<result property="userInfo" column="user_info"/>
-	<result property="headImg" column="head_img" jdbcType="BLOB"/>
-	<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+		<!-- 四，id,与result的标签 property表示javabean中的字段 column表示数据库的字段 javaType 一个java类的完全限定名，或者一个类型别名(typealias),如果映射到javabean，mybatis自动判断属性类型 
+			如果指定映射到hashmap，则需要明确的指定javatype jdbcType 列对应的数据库类型 -->
+		<id property="id" column="id" />
+		<result property="userName" column="user_name" />
+		<result property="userPassword" column="user_password" />
+		<result property="userEmail" column="user_email" />
+		<result property="userInfo" column="user_info" />
+		<result property="headImg" column="head_img" jdbcType="BLOB" />
+		<result property="createTime" column="create_time"
+			jdbcType="TIMESTAMP" />
 
-</resultMap>
+	</resultMap>
 
 
-  <!--  select  标签 ,利用resultMap
-  
-   1.id=selectById 必须在 SysUserMapper中存在以selectById命名的方法 
-   2.resultMap用于设置返回值的类型和映射关系
-   3.resultType表示返回结果的类型
-   必须有一个resultMap标签的 id属性等于userMap
-  -->
-	<select id="selectSysUserById"  resultMap="userMap">
-		select id,user_name,user_password,user_email,user_info,head_img,create_time from sys_user
+	<!-- select 标签 ,利用resultMap 1.id=selectById 必须在 SysUserMapper中存在以selectById命名的方法 
+		2.resultMap用于设置返回值的类型和映射关系 3.resultType表示返回结果的类型 必须有一个resultMap标签的 id属性等于userMap -->
+	<select id="selectSysUserById" resultMap="userMap">
+		select
+		id,user_name,user_password,user_email,user_info,head_img,create_time
+		from sys_user
 		where id=#{id}
 	</select>
-	
-	<!-- 利用resultType  sql 中所有的列必须起别名， 别名跟javabean中的属性一致-->
-	
-	<select id="selectAllSysUser"  resultType="com.wbd.spring.boot.entity.SysUser">
-		select id,user_name userName,user_password userPassword,user_email userEmail,
-		user_info userInfo,head_img headImg,create_time createTime  from sys_user
+
+	<!-- 利用resultType sql 中所有的列必须起别名， 别名跟javabean中的属性一致 -->
+
+	<select id="selectAllSysUser"
+		resultType="com.wbd.spring.boot.entity.SysUser">
+		select id,user_name userName,user_password
+		userPassword,user_email userEmail,
+		user_info userInfo,head_img
+		headImg,create_time createTime from sys_user
 	</select>
-	
+
 	<!-- 根据用户id查询 该用户的所有角色信息 -->
-	<select id="selectAllSysRoleByUserId"  resultType="com.wbd.spring.boot.entity.SysRole">
-		select r.id,r.role_name roleName,r.create_by createBy,r.create_time createTime,
-		u.user_name as "user.userName",u.user_email as "user.userEmail" from sys_user u 
-          INNER JOIN sys_user_role ur on u.id=ur.user_id
-          INNER JOIN sys_role r on ur.role_id=r.id
-           where  u.id=#{userId}
-           
-           <!-- 
-           
-           上面语句也可以这样写
-           select r.*  from sys_user u ,sys_user_role ur,
-sys_role r  where u.id=ur.user_id and ur.role_id=r.id and u.id=1
-            -->
+	<select id="selectAllSysRoleByUserId"
+		resultType="com.wbd.spring.boot.entity.SysRole">
+		select r.id,r.role_name roleName,r.create_by createBy,r.create_time
+		createTime,
+		u.user_name as "user.userName",u.user_email as
+		"user.userEmail" from sys_user u
+		INNER JOIN sys_user_role ur on u.id=ur.user_id
+		INNER JOIN sys_role r on ur.role_id=r.id
+		where u.id=#{userId}
+
+		<!-- 上面语句也可以这样写 select r.* from sys_user u ,sys_user_role ur, sys_role 
+			r where u.id=ur.user_id and ur.role_id=r.id and u.id=1 -->
 	</select>
-	
-	<!-- jdbcType=timestamp 插入时间为2018-12-15 14:12:11
-	     jdbcType=data      插入时间为2018-12-15 
-	     
-	     insert标签的属性：
-	     1.id，用户代表这条语句
-	     2.parameterType 传入的参数，该属性可选，mybatis可以推断传入的具体参数，因此建议不需要配置
-	     3.flushCache 默认为true,任何时候只要语句被调用，都会清空一级缓存和二级缓存
-	     4.statementType:STATEMENT=Statement,PREPARED=PreparedStatement,
-	     CALLABLE=CallableStatement
-	     默认为PREPARED
-	     5.useGenerateKeys 默认为false，如果为true,采用jdbc的generatekeys方法来获得数据库
-	     内部生成的主键
-	     6.keyProperty,通过jdbc的generatekeys方法来获得数据库
-	     内部生成的主键值后将要赋值的属性名，如果想得到多个数据库自动生成的列， 属性值可以用逗号隔开
-	 -->
+
+	<!-- jdbcType=timestamp 插入时间为2018-12-15 14:12:11 jdbcType=data 插入时间为2018-12-15 
+		insert标签的属性： 1.id，用户代表这条语句 2.parameterType 传入的参数，该属性可选，mybatis可以推断传入的具体参数，因此建议不需要配置 
+		3.flushCache 默认为true,任何时候只要语句被调用，都会清空一级缓存和二级缓存 4.statementType:STATEMENT=Statement,PREPARED=PreparedStatement, 
+		CALLABLE=CallableStatement 默认为PREPARED 5.useGenerateKeys 默认为false，如果为true,采用jdbc的generatekeys方法来获得数据库 
+		内部生成的主键 6.keyProperty,通过jdbc的generatekeys方法来获得数据库 内部生成的主键值后将要赋值的属性名，如果想得到多个数据库自动生成的列， 
+		属性值可以用逗号隔开 -->
 	<insert id="insertSysUser">
-insert into sys_user values(#{id},#{userName},#{userPassword},#{userEmail},#{userInfo},#{headImg,jdbcType=BLOB},#{createTime,jdbcType=TIMESTAMP});
+		insert into sys_user
+		values(#{id},#{userName},#{userPassword},#{userEmail},#{userInfo},#{headImg,jdbcType=BLOB},#{createTime,jdbcType=TIMESTAMP});
 	</insert>
-	
-	<!--1.useGeneratedKeys="true" 表示插入数据后返回数据库的id
-	    2.keyProperty                  接收数据库返回id值的属性
-	    3.keyColumn 返回多个属性时，keyProperty也要一一对应
-	  -->
-	<insert id="insertSysUserReturnAutoId" useGeneratedKeys="true" keyProperty="id">
-insert into sys_user(user_name,user_password,user_email,user_info,head_img,create_time) values(#{userName},#{userPassword},#{userEmail},#{userInfo},#{headImg,jdbcType=BLOB},#{createTime,jdbcType=TIMESTAMP});
+
+	<!--1.useGeneratedKeys="true" 表示插入数据后返回数据库的id 2.keyProperty 接收数据库返回id值的属性 
+		3.keyColumn 返回多个属性时，keyProperty也要一一对应 -->
+	<insert id="insertSysUserReturnAutoId" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into
+		sys_user(user_name,user_password,user_email,user_info,head_img,create_time)
+		values(#{userName},#{userPassword},#{userEmail},#{userInfo},#{headImg,jdbcType=BLOB},#{createTime,jdbcType=TIMESTAMP});
 	</insert>
-	
-	
-	<insert id="insertSysUserReturnSelectKey" >
-insert into sys_user(user_name,user_password,user_email,user_info,head_img,create_time) values(#{userName},#{userPassword},#{userEmail},#{userInfo},#{headImg,jdbcType=BLOB},#{createTime,jdbcType=TIMESTAMP});
-    <!-- 1.keyColumn数据库列
-         2. resultType返回类型
-         3.keyProperty接受属性
-         4.order：after为mysql，orale为before，因为oralce是先获得序列值才插入数据库，而mysql先插入才返回-->
-    <selectKey keyColumn="id" resultType="long" keyProperty="id" order="AFTER">
-    select last_insert_id()
-    </selectKey>
+
+
+	<insert id="insertSysUserReturnSelectKey">
+		insert into
+		sys_user(user_name,user_password,user_email,user_info,head_img,create_time)
+		values(#{userName},#{userPassword},#{userEmail},#{userInfo},#{headImg,jdbcType=BLOB},#{createTime,jdbcType=TIMESTAMP});
+		<!-- 1.keyColumn数据库列 2. resultType返回类型 3.keyProperty接受属性 4.order：after为mysql，orale为before，因为oralce是先获得序列值才插入数据库，而mysql先插入才返回 -->
+		<selectKey keyColumn="id" resultType="long" keyProperty="id"
+			order="AFTER">
+			select last_insert_id()
+		</selectKey>
 
 	</insert>
-	
-	
+
+
 	<update id="updateSysUser">
-	
-	update sys_user set user_name=#{userName},user_email=#{userEmail} where id=#{id}
+
+		update sys_user set user_name=#{userName},user_email=#{userEmail} where
+		id=#{id}
 	</update>
-	
+
 	<delete id="deleteSysUserById">
-	
-	delete from sys_user where id=#{userId}
+
+		delete from sys_user where id=#{userId}
 	</delete>
-	
+
 	<!-- 根据用户id和 createby=1查询 该用户的所有角色信息 -->
-	<select id="selectAllSysRoleByUserIdAndCreate"  resultType="com.wbd.spring.boot.entity.SysRole">
-		select r.id,r.role_name roleName,r.create_by createBy,r.create_time createTime,
-		u.user_name as "user.userName",u.user_email as "user.userEmail" from sys_user u 
-          INNER JOIN sys_user_role ur on u.id=ur.user_id
-          INNER JOIN sys_role r on ur.role_id=r.id
-           where  u.id=#{userId} and r.create_by=#{createBy}
-          
+	<select id="selectAllSysRoleByUserIdAndCreate"
+		resultType="com.wbd.spring.boot.entity.SysRole">
+		select r.id,r.role_name roleName,r.create_by
+		createBy,r.create_time createTime,
+		u.user_name as
+		"user.userName",u.user_email as "user.userEmail" from sys_user u
+		INNER JOIN sys_user_role ur on u.id=ur.user_id
+		INNER JOIN sys_role r on ur.role_id=r.id
+		where u.id=#{userId} and r.create_by=#{createBy}
+
 	</select>
-	
-	
+
+
 	<!-- 根据用户id和 createby=1查询 该用户的所有角色信息 -->
-	<select id="selectAllSysRoleByBeans"  resultType="com.wbd.spring.boot.entity.SysRole">
-		select r.id,r.role_name roleName,r.create_by createBy,r.create_time createTime,
-		u.user_name as "user.userName",u.user_email as "user.userEmail" from sys_user u 
-          INNER JOIN sys_user_role ur on u.id=ur.user_id
-          INNER JOIN sys_role r on ur.role_id=r.id
-           where  u.id=#{user.id} and r.create_by=#{role.createBy}
-          
+	<select id="selectAllSysRoleByBeans"
+		resultType="com.wbd.spring.boot.entity.SysRole">
+		select r.id,r.role_name roleName,r.create_by
+		createBy,r.create_time createTime,
+		u.user_name as
+		"user.userName",u.user_email as "user.userEmail" from sys_user u
+		INNER JOIN sys_user_role ur on u.id=ur.user_id
+		INNER JOIN sys_role r on ur.role_id=r.id
+		where u.id=#{user.id} and r.create_by=#{role.createBy}
+
 	</select>
-	
-	
-	
+
+
+
 	<!-- 动态sql -->
-	
-	
+
+
 	<!-- 1.where中用if -->
-	<!-- 利用resultType  sql 中所有的列必须起别名， 别名跟javabean中的属性一致 -->
-	<select id="selectAllSysUserByCondition"  resultType="com.wbd.spring.boot.entity.SysUser">
-		select id,user_name userName,user_password userPassword,user_email userEmail,
-		user_info userInfo,head_img headImg,create_time createTime  from sys_user
-		where 1=1 
+	<!-- 利用resultType sql 中所有的列必须起别名， 别名跟javabean中的属性一致 -->
+	<select id="selectAllSysUserByCondition"
+		resultType="com.wbd.spring.boot.entity.SysUser">
+		select id,user_name userName,user_password userPassword,user_email
+		userEmail,
+		user_info userInfo,head_img headImg,create_time createTime
+		from sys_user
+		where 1=1
 		<if test="userName !=null and userName !='' ">
-		and user_name like concat('%',#{userName},'%')
+			and user_name like concat('%',#{userName},'%')
 		</if>
-		
-		<!--
-		1. property!=null 或者 property==null 适用任何字段，用来判断属性值是否为空
-		
-		2. property!='' 或者 property=='' 只用来判断字符串是否为空字符串，
-		 -->
-		
+
+		<!-- 1. property!=null 或者 property==null 适用任何字段，用来判断属性值是否为空 2. property!='' 
+			或者 property=='' 只用来判断字符串是否为空字符串， -->
+
 		<if test="userEmail !=null and userEmail !='' ">
-		
-		and user_email = #{userEmail}
-		
+
+			and user_email = #{userEmail}
+
 		</if>
-		
+
 		<if test="userInfo !=null and userInfo !='' ">
-		
-		and user_info = #{userInfo}
-		
+
+			and user_info = #{userInfo}
+
 		</if>
-		
+
 	</select>
-	
-	
+
+
 	<!-- 2.update中用if -->
-	
+
 	<update id="updateSysUserByIdSelective">
-	
-	update sys_user set 
-	
-	<if test="userName !=null and userName !='' ">
-	
-	user_name=#{userName},
-	
-	</if>
-	
-	<if test="userPassword !=null and userPassword !='' ">
-	user_password=#{userPassword},
-		
-	</if>
-	
-	<if test="userEmail !=null and userEmail !='' ">
-	
-	user_email=#{userEmail},
-	
-	</if>
-	
-	
-	<if test="userInfo !=null and userInfo !='' ">
-	
-	user_info=#{userInfo},
-	
-	</if>
-	
-	<if test="headImg !=null and headImg !='' ">
-	
-	head_img=#{headImg},
-	
-	</if>
-	
-	
-	<if test="createTime !=null and createTime !='' ">
-	
-	create_time=#{createTime},
-	
-	</if>
-	
-	id=${id}
-	where id=${id}
+
+		update sys_user set
+
+		<if test="userName !=null and userName !='' ">
+
+			user_name=#{userName},
+
+		</if>
+
+		<if test="userPassword !=null and userPassword !='' ">
+			user_password=#{userPassword},
+
+		</if>
+
+		<if test="userEmail !=null and userEmail !='' ">
+
+			user_email=#{userEmail},
+
+		</if>
+
+
+		<if test="userInfo !=null and userInfo !='' ">
+
+			user_info=#{userInfo},
+
+		</if>
+
+		<if test="headImg !=null and headImg !='' ">
+
+			head_img=#{headImg},
+
+		</if>
+
+
+		<if test="createTime !=null and createTime !='' ">
+
+			create_time=#{createTime},
+
+		</if>
+
+		id=${id}
+		where id=${id}
+	</update>
+
+
+	<!-- 3.insert中用if -->
+
+	<insert id="insertSysUserByIf" useGeneratedKeys="true"
+		keyProperty="id">
+
+		insert into sys_user
+		(
+
+		user_name,user_password,
+
+		<if test="userEmail !=null and userEmail !='' ">
+			#{userEmail},
+		</if>
+
+		user_info
+		)
+
+
+		values
+
+		(
+
+		#{userName},#{userPassword},
+		<if test="userEmail !=null and userEmail !='' ">
+			#{userEmail},
+		</if>
+
+		#{userInfo}
+		)
+	</insert>
+
+
+	<!-- 4.choose when otherwise 来替换if else else if else -->
+
+	<select id="selectSysUserByIfAndElse"
+		resultType="com.wbd.spring.boot.entity.SysUser">
+		select id,user_name userName,user_password userPassword,user_email
+		userEmail,
+		user_info userInfo,head_img headImg,create_time createTime
+		from sys_user
+		where 1=1
+
+		<choose>
+
+			<when test="id !=null">
+
+				and id=#{id}
+
+			</when>
+
+
+			<when test="userName != null and userName !='' ">
+
+				and user_name =#{userName}
+
+			</when>
+
+
+			<otherwise>
+
+				and 1=2
+			</otherwise>
+
+		</choose>
+	</select>
+
+
+	<!-- 5.where 标签 可以防止sql注入， 避免where 1=1 的问题 -->
+	<select id="selectSysUserByWhere"
+		resultType="com.wbd.spring.boot.entity.SysUser">
+		select id,user_name userName,user_password userPassword,user_email
+		userEmail,
+		user_info userInfo,head_img headImg,create_time createTime
+		from sys_user
+
+		<where>
+
+			<if test="userName != null and userName !='' ">
+
+				and user_name like concat('%',#{userName},'%')
+
+			</if>
+
+
+			<if test="userPassword != null and userPassword !='' ">
+
+				and user_password like concat('%',#{userPassword},'%')
+
+			</if>
+
+			<if test="userEmail !=null and userEmail !='' ">
+
+				and user_email like concat('%',${userEmail},'%')
+
+			</if>
+
+
+		</where>
+
+
+	</select>
+
+
+	<!-- 6.set 标签 用来做修改和update搭配使用，无法 避免where 1=1 的问题，所以用的时候要注意 -->
+	<update id="updateSysUserBySet">
+		update sys_user
+
+		<set>
+			<if test="userName != null and userName !='' ">
+
+				user_name=#{userName},
+			</if>
+
+
+			<if test="userPassword !=null and userPassword !='' ">
+				user_password=#{userPassword},
+
+			</if>
+
+			<if test="userEmail !=null and userEmail !='' ">
+
+				user_email=#{userEmail},
+
+			</if>
+
+
+			<if test="userInfo !=null and userInfo !='' ">
+
+				user_info=#{userInfo},
+
+			</if>
+
+			id=#{id},
+
+		</set>
+
+		where id=#{id}
 	</update>
 	
+	<!--  
+	
+	7.foreache的使用，可以防止sql注入
+	  比如：where id in(1,2,3,)  
+	  
+	 * 1.参数为集合
+	
+	 -->
+	<select id="selectSysUserByForeach"
+		resultType="com.wbd.spring.boot.entity.SysUser">
+		select id,user_name userName,user_password userPassword,user_email
+		userEmail,
+		user_info userInfo,head_img headImg,create_time createTime
+		from sys_user where id in
+		<foreach collection="list" open="(" close=")" separator="," item="id" index="i">
+		
+		#{id}
+		
+		</foreach>
+		<!-- 
+		
+		1.collection必填，可以是list，map,array
+		2.item变量名， 值为迭代对象中取出的每一个值
+		3.index 索引的属性名，在集合数组情况下为当前索引值，当为map时为map的key
+		 -->
+   </select>
+   
+   
+   
+   <!--  
+	
+	7.foreache的使用，可以防止sql注入
+	  比如：where id in(1,2,3,)  
+	  
+	 * 2.参数为数组
+	
+	 -->
+   <select id="selectSysUserByForeachArray"
+		resultType="com.wbd.spring.boot.entity.SysUser">
+		select id,user_name userName,user_password userPassword,user_email
+		userEmail,
+		user_info userInfo,head_img headImg,create_time createTime
+		from sys_user where id in
+		
+		<foreach collection="array" open="(" close=")" separator="," item="id" index="i">
+		#{id}
+		</foreach>
+		
+   </select>
+   
+   <!-- 
+   
+   多个参数， 比如，有一个参数为数组的，推荐方法定义中采用@Param
+   select * from sys_user u 
+
+where u.user_name like '%李%' and  id in(1001,1003,1004,1005,1006)
+   
+    -->
+   
+   <select id="selectSysUserByForeachArrayAndName"
+		resultType="com.wbd.spring.boot.entity.SysUser">
+		select id,user_name userName,user_password userPassword,user_email
+		userEmail,
+		user_info userInfo,head_img headImg,create_time createTime
+		from sys_user where id in
+		
+		<foreach collection="idArray" open="(" close=")" separator="," item="id" index="i">
+		#{id}
+		</foreach>
+		
+		and user_name like concat('%',#{userName},'%')
+		
+   </select>
+   
+   
+   <update id="updateSysUserByForeachMap">
+   
+   update sys_user set
+   
+   <foreach collection="map" item="val" index="key" separator=",">
+   
+   <!-- 在foreache中，map参数，获取key通过${},而不是#{} -->
+   ${key} = #{val} 
+   
+   </foreach>
+   
+   where id=#{id}
+   
+   </update>
+	
+	<!-- 批量插入 -->
+	
+	<insert id="insertBath" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into
+		sys_user(user_name,user_password,user_email,user_info)
+		values
+		
+		<foreach collection="list" item="user" separator=",">
+		
+		(
+		
+		
+		#{user.userName},#{user.userPassword},#{user.userEmail},#{user.userInfo}
+		
+		
+		)
+		<!-- 通过item指定了循环变量后，在引用值时候需要 属性.属性的方式 -->
+		</foreach>
+		
+	</insert>
 </mapper>

@@ -1,6 +1,7 @@
 package com.spring.boot.ibatis.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -146,12 +147,100 @@ public interface SysUserMapper {
 	
 	
 	/**2.update中用if
-	 * 根据条件查询用户信息
-	 * <p>Title: selectAllSysUserByCondition</p>  
+	 * <p>Title: updateSysUserByIdSelective</p>  
 	 * <p>Description: </p>  
 	 * @param user
 	 * @return
 	 */
 	Integer updateSysUserByIdSelective(SysUser user);
 	
+	
+	
+	/**3.insert中用if
+	 * <p>Title: selectAllSysUserByCondition</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
+	Integer insertSysUserByIf(SysUser user);
+	
+	
+	/**4.choose when otherwise 来替换if else  else if  else,
+	 * choose必须包含一个when，有0个或者1个otherwise
+	 * <p>Title: selectAllSysUserByCondition</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
+	SysUser selectSysUserByIfAndElse(SysUser user);
+	
+	
+	/**5,where 标签  可以防止sql注入， 避免where 1=1 的问题 
+	 * choose必须包含一个when，有0个或者1个otherwise
+	 * <p>Title: selectAllSysUserByCondition</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
+	List<SysUser> selectSysUserByWhere(SysUser user);
+	
+	
+	/**  
+	 * 6.set 标签和update标签搭配使用
+	 * <p>Title: insertSysUserByIf</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return  
+	 */ 
+	Integer updateSysUserBySet(SysUser user);
+	
+	/**
+	 * 7.foreache的使用，可以防止sql注入
+	 * 比如：where id in(1,2,3,)  
+	 * 
+	 * 1.参数为集合
+	 * <p>Title: selectSysUserByForeach</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
+	List<SysUser> selectSysUserByForeach(List<Long> idList);
+	
+	
+	/**
+	 * foreache的使用，可以防止sql注入
+	 * 比如：where id in(1,2,3,)  
+	 * 
+	 * 2.参数为数组
+	 * <p>Title: selectSysUserByForeach</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
+	List<SysUser> selectSysUserByForeachArray(Long[] idArray);
+	
+	/**
+	 * 3.多个参数， 比如，有一个参数为数组的，推荐方法定义中采用@Param,此时ibatis中的collection必须指定为@Param所指定的名字
+      select * from sys_user u  where u.user_name like '%李%' and  id in(1001,1003,1004,1005,1006)
+   
+	 * <p>Title: selectSysUserByForeachArrayAndName</p>  
+	 * <p>Description: </p>  
+	 * @param idArray
+	 * @return
+	 */
+	List<SysUser> selectSysUserByForeachArrayAndName(@Param("userName") String userName, @Param("idArray") Long[] idArray);
+	
+	
+	/**
+	 * 4.参数为map
+   
+	 * <p>Title: selectSysUserByForeachMap</p>  
+	 * <p>Description: </p>  
+	 * @param idArray
+	 * @return
+	 */
+	Integer updateSysUserByForeachMap(@Param("map")Map<String,Object> map,@Param("id") Integer id);
+	
+	
+	Integer insertBath (List<SysUser> userList);
 }

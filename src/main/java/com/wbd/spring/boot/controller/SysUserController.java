@@ -1,7 +1,10 @@
 package com.wbd.spring.boot.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,10 +133,144 @@ public class SysUserController {
 		return sum.selectAllSysUserByCondition(user);
 	}
 	
+	/**
+	 *  2.update中用if
+	 * <p>Title: updateSysUserByIdSelective</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
 	@RequestMapping(value="/updateSysUserByIdSelective",method=RequestMethod.POST) 
 	Integer updateSysUserByIdSelective(@RequestBody SysUser user){
 	
 		return sum.updateSysUserByIdSelective(user);
 	}
+	
+	
+	/**
+	 * 3.insert中用if
+	 * <p>Title: insertSysUserByIf</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value="/insertSysUserByIf",method=RequestMethod.POST) 
+	Integer insertSysUserByIf(@RequestBody SysUser user){
+	
+		return sum.insertSysUserByIf(user);
+	}
+	
+	
+	
+	/**
+	 * 4.choose when otherwise 来替代if else  else if  else
+	 * <p>Title: selectSysUserByIfAndElse</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value="/selectSysUserByIfAndElse",method=RequestMethod.POST) 
+	SysUser selectSysUserByIfAndElse(@RequestBody SysUser user){
+	
+		return sum.selectSysUserByIfAndElse(user);
+	}
+	
+	
+	/**5,where 标签  可以防止sql注入， 避免where 1=1 的问题 
+	 * <p>Title: selectSysUserByWhere</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
+	
+	@RequestMapping(value="/selectSysUserByWhere",method=RequestMethod.POST) 
+	List<SysUser> selectSysUserByWhere(@RequestBody SysUser user){
+		return sum.selectSysUserByWhere(user);
+	}
+	
+	
+	/**
+	 * 6.set 标签和update标签搭配使用
+	 * <p>Title: updateSysUserBySet</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value="/updateSysUserBySet",method=RequestMethod.POST) 
+	Integer updateSysUserBySet(@RequestBody SysUser user){
+		return sum.updateSysUserBySet(user);
+	}
+	
+	/**
+	 * 7.foreache的使用，可以防止sql注入
+	 * 比如：where id in(1,2,3,)  
+	 * 
+	 * 1.参数为集合
+	 * <p>Title: selectSysUserByForeach</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value="/selectSysUserByForeach") 
+	List<SysUser> selectSysUserByForeach(){
+		List<Long> idList   = new ArrayList<Long>();
+		idList.add(1l);
+		idList.add(119l);
+		idList.add(1001l);
+		return sum.selectSysUserByForeach(idList);
+	}
+	
+	
+	/**
+	 * foreache的使用，可以防止sql注入
+	 * 比如：where id in(1,2,3,)  
+	 * 
+	 * 2.参数为数组
+	 * <p>Title: selectSysUserByForeachArray</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value="/selectSysUserByForeachArray")
+	List<SysUser> selectSysUserByForeachArray(){
+		Long[] idArray =new Long[] {1004l,1005l,1006l};
+		return sum.selectSysUserByForeachArray(idArray);
+	}
+	
+	@RequestMapping(value="/selectSysUserByForeachArrayAndName")
+	List<SysUser> selectSysUserByForeachArrayAndName(){
+		Long[] idArray =new Long[] {1001l,1003l,1004l,1005l,1006l};
+		return sum.selectSysUserByForeachArrayAndName("李",idArray);
+	}
+	
+	
+	
+	@RequestMapping(value="/updateSysUserByForeachMap")
+	Integer updateSysUserByForeachMap(){
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("user_name", "朱明泽");  //key必须是数据库中的字段
+		map.put("user_info", "hello kity");
+		map.put("id", "1003");
+		return sum.updateSysUserByForeachMap(map,1003);
+	}
+	
+	
+	@RequestMapping(value="/insertBath")
+	Integer insertBath(){
+		List<SysUser> userList = new ArrayList<SysUser>();
+		
+		for(int i=0;i<5;i++)
+		{
+			SysUser u = new SysUser();
+			u.setUserName("test"+i);
+			u.setUserPassword("123456");
+			u.setUserEmail("285917033@qq.com");
+			u.setUserInfo("hello world"+i);
+			userList.add(u);
+		}
+		
+		return sum.insertBath(userList);
+	}
+	
 	
 }

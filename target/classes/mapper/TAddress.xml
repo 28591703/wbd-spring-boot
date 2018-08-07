@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+					"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="com.spring.boot.ibatis.mapper.TAddressMapper">
+	<resultMap type="com.wbd.spring.boot.entity.TAddress"
+		id="tAddress">
+		<id property="userId" column="t_user_id" />
+		<result property="address" column="address" />
+	</resultMap>
+	
+	<select id="selectAddressById" resultMap="tAddress">
+	
+	select * from t_mybatis_address t where t.t_user_id=#{id}
+	
+	</select>
+
+</mapper>

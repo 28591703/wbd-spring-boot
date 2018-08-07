@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+					"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="com.spring.boot.ibatis.mapper.TUserMapper">
+
+<!-- 第一种，自动映射， -->
+
+<select id="selectTUserById" resultType="com.wbd.spring.boot.entity.TUser">
+   select u.id,u.t_name tName ,t_pwd pwd,a.t_user_id "address.userId",a.address "address.address" from t_mybatis_user u inner JOIN t_mybatis_address a
+  on u.id = a.t_user_id   where u.id=#{id}
+</select>
+
+<!-- 第二种， -->
+
+<resultMap type="com.wbd.spring.boot.entity.TUser" id="tUserMap">
+<id property="id" column="id"/>
+<result column="t_name" property="tName"/>
+<result column="t_pwd" property="pwd"/>
+</resultMap>
+
+<resultMap type="com.wbd.spring.boot.entity.TUser" id="tUserAddress" extends="tUserMap">
+<result property="address.userId" column="t_user_id"/>
+<result property="address.address" column="address"/>
+</resultMap>
+	
+<select id="selectTUserByIdSecond"  resultMap="tUserAddress">
+   select u.id,u.t_name tName ,t_pwd pwd,a.t_user_id "address.userId",a.address "address.address" from t_mybatis_user u inner JOIN t_mybatis_address a
+  on u.id = a.t_user_id   where u.id=#{id}
+</select>	
+	
+	
+	<!-- 第三种， association标签的方式 ,标签属性,association 采用javaType
+	
+	1.property 对应实体类的名称，必填
+	2.javatype，属性对应的java类型
+	3.resultmap 可以直接使用现有的resultmap，而不需要在这里配置
+	4.columnPrefix 查询列的前缀，配置前缀后，在子标签result的column可以省略前缀
+	
+	
+	-->
+	
+	<resultMap type="com.wbd.spring.boot.entity.TUser" id="userassociation" extends="tUserMap">
+	<association property="address" columnPrefix="addr_" javaType="com.wbd.spring.boot.entity.TAddress">
+	<result property="userId" column="t_user_id"/>
+    <result property="address" column="address"/>
+	</association>
+	</resultMap>
+	
+	<!-- 在sql查询列中，必须加上addr前缀，而且必须是数据库的column，不是对象的属性 -->
+<select id="selectTUserByIdThree"  resultMap="userassociation">
+   select u.id,u.t_name,u.t_pwd,a.t_user_id addr_t_user_id,a.address addr_address from t_mybatis_user u inner JOIN t_mybatis_address a
+  on u.id = a.t_user_id   where u.id=#{id}
+</select>	
+	
+	
+	<!-- 第四种， association标签的方式 ,标签属性,association 采用resultMap形式 -->
+	
+	
+	<resultMap type="com.wbd.spring.boot.entity.TAddress" id="userassociations">
+	<id property="userId" column="t_user_id"/>
+    <result property="address" column="address"/>
+	</resultMap>
+	
+	<resultMap type="com.wbd.spring.boot.entity.TUser" id="resultAddress" extends="tUserMap">
+	<association property="address" columnPrefix="addr_" resultMap="userassociations"></association>
+	</resultMap>
+	
+	<select id="selectTUserByIdFoux"  resultMap="userassociation">
+   select u.id,u.t_name,u.t_pwd,a.t_user_id addr_t_user_id,a.address addr_address from t_mybatis_user u inner JOIN t_mybatis_address a
+  on u.id = a.t_user_id   where u.id=#{id}
+</select>
+
+
+<!-- 第五种， association标签嵌套查询,嵌套查询常用属性如下
+   1. select 另一个映射查询的id，系统会额外执行这个查询获得嵌套对象的结果
+   2.column 列名或者别名 将查询中的列作为嵌套查询的参数，配置方式如下column={prop1=col1,prop2=col2}
+   prop1作为嵌套查询的参数
+   3.fetchType 数据加载方式，lazy和eager，为延迟加载和积极加载 
+   
+   -->
+	
+	<resultMap type="com.wbd.spring.boot.entity.TUser" id="userMapAddress" extends="tUserMap">
+	<!-- column 列名或者别名 将查询中的列作为嵌套查询的参数， 主查询会返回 t_user_id -->
+	<association property="address"   column="{id=t_user_id}" select="com.spring.boot.ibatis.mapper.TAddressMapper.selectAddressById"/>
+	</resultMap>
+	
+	<select id="selectUserAndAddressById" resultMap="userMapAddress">
+	 select u.id,u.t_name,u.t_pwd,a.t_user_id  from t_mybatis_user u inner JOIN t_mybatis_address a
+  on u.id = a.t_user_id   where u.id=#{id}
+	</select>
+</mapper>
