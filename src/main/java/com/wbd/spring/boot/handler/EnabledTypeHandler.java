@@ -1,4 +1,4 @@
-package com.wbd.spring.boot.entity;
+package com.wbd.spring.boot.handler;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -8,11 +8,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedTypes;
 import org.apache.ibatis.type.TypeHandler;
+
+import com.wbd.spring.boot.entity.Enabled;
 
 /**
  * Enabled 类型处理器
  */
+@MappedTypes({Enabled.class})
 public class EnabledTypeHandler implements TypeHandler<Enabled> {
 	private final Map<Integer, Enabled> enabledMap = new HashMap<Integer, Enabled>();
 

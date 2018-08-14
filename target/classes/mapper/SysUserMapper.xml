@@ -6,6 +6,14 @@
 
 <mapper namespace="com.spring.boot.ibatis.mapper.SysUserMapper">
 
+<cache type="com.wbd.spring.boot.config.MybatisRedisCache">
+        <property name="eviction" value="LRU" />
+        <property name="flushInterval" value="6000000" />
+        <property name="size" value="1024" />
+        <property name="readOnly" value="false" />
+    </cache>
+
+
 	<!-- 二.resultMap属性i 1.id 表示标识，可以用来引用和继承 2.type: 表示映射的java类型 3.extends:可以继承其他的resultmap，属性为继承resultmap的id 
 		三. resultMap包含的标签 1. constructor 构造器：id,arg 与，下面的id，result标签一样。 2.id 一个id结果，标记结果作为id唯一值，可以帮助提高整体性能 
 		3.result注入到java对象属性的普通结果 4.association 一个复杂类型的关联 5.collection复杂类型的集合 6.discriminator 
@@ -54,9 +62,11 @@
 		createTime,
 		u.user_name as "user.userName",u.user_email as
 		"user.userEmail" from sys_user u
-		INNER JOIN sys_user_role ur on u.id=ur.user_id
+		INNER JOIN sys_user_role ur on
+		u.id=ur.user_id
 		INNER JOIN sys_role r on ur.role_id=r.id
-		where u.id=#{userId}
+		where
+		u.id=#{userId}
 
 		<!-- 上面语句也可以这样写 select r.* from sys_user u ,sys_user_role ur, sys_role 
 			r where u.id=ur.user_id and ur.role_id=r.id and u.id=1 -->
@@ -98,7 +108,8 @@
 
 	<update id="updateSysUser">
 
-		update sys_user set user_name=#{userName},user_email=#{userEmail} where
+		update sys_user set
+		user_name=#{userName},user_email=#{userEmail} where
 		id=#{id}
 	</update>
 
@@ -114,8 +125,10 @@
 		createBy,r.create_time createTime,
 		u.user_name as
 		"user.userName",u.user_email as "user.userEmail" from sys_user u
-		INNER JOIN sys_user_role ur on u.id=ur.user_id
-		INNER JOIN sys_role r on ur.role_id=r.id
+		INNER
+		JOIN sys_user_role ur on u.id=ur.user_id
+		INNER JOIN sys_role r on
+		ur.role_id=r.id
 		where u.id=#{userId} and r.create_by=#{createBy}
 
 	</select>
@@ -128,8 +141,10 @@
 		createBy,r.create_time createTime,
 		u.user_name as
 		"user.userName",u.user_email as "user.userEmail" from sys_user u
-		INNER JOIN sys_user_role ur on u.id=ur.user_id
-		INNER JOIN sys_role r on ur.role_id=r.id
+		INNER
+		JOIN sys_user_role ur on u.id=ur.user_id
+		INNER JOIN sys_role r on
+		ur.role_id=r.id
 		where u.id=#{user.id} and r.create_by=#{role.createBy}
 
 	</select>
@@ -356,116 +371,286 @@
 
 		where id=#{id}
 	</update>
-	
-	<!--  
-	
-	7.foreache的使用，可以防止sql注入
-	  比如：where id in(1,2,3,)  
-	  
-	 * 1.参数为集合
-	
-	 -->
+
+	<!-- 7.foreache的使用，可以防止sql注入 比如：where id in(1,2,3,) * 1.参数为集合 -->
 	<select id="selectSysUserByForeach"
 		resultType="com.wbd.spring.boot.entity.SysUser">
 		select id,user_name userName,user_password userPassword,user_email
 		userEmail,
 		user_info userInfo,head_img headImg,create_time createTime
 		from sys_user where id in
-		<foreach collection="list" open="(" close=")" separator="," item="id" index="i">
-		
-		#{id}
-		
-		</foreach>
-		<!-- 
-		
-		1.collection必填，可以是list，map,array
-		2.item变量名， 值为迭代对象中取出的每一个值
-		3.index 索引的属性名，在集合数组情况下为当前索引值，当为map时为map的key
-		 -->
-   </select>
-   
-   
-   
-   <!--  
-	
-	7.foreache的使用，可以防止sql注入
-	  比如：where id in(1,2,3,)  
-	  
-	 * 2.参数为数组
-	
-	 -->
-   <select id="selectSysUserByForeachArray"
-		resultType="com.wbd.spring.boot.entity.SysUser">
-		select id,user_name userName,user_password userPassword,user_email
-		userEmail,
-		user_info userInfo,head_img headImg,create_time createTime
-		from sys_user where id in
-		
-		<foreach collection="array" open="(" close=")" separator="," item="id" index="i">
-		#{id}
-		</foreach>
-		
-   </select>
-   
-   <!-- 
-   
-   多个参数， 比如，有一个参数为数组的，推荐方法定义中采用@Param
-   select * from sys_user u 
+		<foreach collection="list" open="(" close=")" separator=","
+			item="id" index="i">
 
-where u.user_name like '%李%' and  id in(1001,1003,1004,1005,1006)
-   
-    -->
-   
-   <select id="selectSysUserByForeachArrayAndName"
+			#{id}
+
+		</foreach>
+		<!-- 1.collection必填，可以是list，map,array 2.item变量名， 值为迭代对象中取出的每一个值 3.index 
+			索引的属性名，在集合数组情况下为当前索引值，当为map时为map的key -->
+	</select>
+
+
+
+	<!-- 7.foreache的使用，可以防止sql注入 比如：where id in(1,2,3,) * 2.参数为数组 -->
+	<select id="selectSysUserByForeachArray"
 		resultType="com.wbd.spring.boot.entity.SysUser">
 		select id,user_name userName,user_password userPassword,user_email
 		userEmail,
 		user_info userInfo,head_img headImg,create_time createTime
 		from sys_user where id in
-		
-		<foreach collection="idArray" open="(" close=")" separator="," item="id" index="i">
-		#{id}
+
+		<foreach collection="array" open="(" close=")" separator=","
+			item="id" index="i">
+			#{id}
 		</foreach>
-		
+
+	</select>
+
+	<!-- 多个参数， 比如，有一个参数为数组的，推荐方法定义中采用@Param select * from sys_user u where u.user_name 
+		like '%李%' and id in(1001,1003,1004,1005,1006) -->
+
+	<select id="selectSysUserByForeachArrayAndName"
+		resultType="com.wbd.spring.boot.entity.SysUser">
+		select id,user_name userName,user_password userPassword,user_email
+		userEmail,
+		user_info userInfo,head_img headImg,create_time createTime
+		from sys_user where id in
+
+		<foreach collection="idArray" open="(" close=")" separator=","
+			item="id" index="i">
+			#{id}
+		</foreach>
+
 		and user_name like concat('%',#{userName},'%')
-		
-   </select>
-   
-   
-   <update id="updateSysUserByForeachMap">
-   
-   update sys_user set
-   
-   <foreach collection="map" item="val" index="key" separator=",">
-   
-   <!-- 在foreache中，map参数，获取key通过${},而不是#{} -->
-   ${key} = #{val} 
-   
-   </foreach>
-   
-   where id=#{id}
-   
-   </update>
-	
+
+	</select>
+
+
+	<update id="updateSysUserByForeachMap">
+
+		update sys_user set
+
+		<foreach collection="map" item="val" index="key" separator=",">
+
+			<!-- 在foreache中，map参数，获取key通过${},而不是#{} -->
+			${key} = #{val}
+
+		</foreach>
+
+		where id=#{id}
+
+	</update>
+
 	<!-- 批量插入 -->
-	
-	<insert id="insertBath" useGeneratedKeys="true"
-		keyProperty="id">
+
+	<insert id="insertBath" useGeneratedKeys="true" keyProperty="id">
 		insert into
 		sys_user(user_name,user_password,user_email,user_info)
 		values
-		
+
 		<foreach collection="list" item="user" separator=",">
-		
-		(
-		
-		
-		#{user.userName},#{user.userPassword},#{user.userEmail},#{user.userInfo}
-		
-		
-		)
-		<!-- 通过item指定了循环变量后，在引用值时候需要 属性.属性的方式 -->
+
+			(
+
+
+			#{user.userName},#{user.userPassword},#{user.userEmail},#{user.userInfo}
+
+
+			)
+			<!-- 通过item指定了循环变量后，在引用值时候需要 属性.属性的方式 -->
 		</foreach>
-		
+
 	</insert>
+
+
+	<!-- 1 。 一对多的查询 查询所有 角色信息 -->
+
+	<resultMap type="com.wbd.spring.boot.entity.SysUser"
+		id="userRoleListMap" extends="userMap">
+		<!-- 加上columnPrefix="role_"后，sql查询列必须加上这个role_ ,在result子标签中就可以不需要加前缀 -->
+		<collection property="roleList" columnPrefix="role_"
+			resultMap="com.spring.boot.ibatis.mapper.SysRoleMapper.roleMap" />
+	</resultMap>
+
+	<select id="selectAllUserAndRoles" resultMap="userRoleListMap">
+
+		select
+		u.id,u.user_name,u.user_password,u.user_email,u.user_info,u.head_img,u.create_time,
+
+		r.id role_id,r.role_name role_role_name,r.enabled
+		role_enabled,r.create_by role_create_by, r.create_time
+		role_create_time
+
+		from sys_user u INNER JOIN sys_user_role ur on u.id =
+		ur.user_id
+
+		INNER JOIN sys_role r on ur.role_id = r.id
+
+	</select>
+
+
+
+	<!-- 2 .一对多的查询 根据id查询 所有 角色信息 -->
+
+
+	<resultMap type="com.wbd.spring.boot.entity.SysUser"
+		id="userRoleListMapById" extends="userMap">
+		<!-- 加上columnPrefix="role_"后，sql查询列必须加上这个role_ ,在result子标签中就可以不需要加前缀 -->
+		<collection property="roleList" columnPrefix="role_"
+			resultMap="com.spring.boot.ibatis.mapper.SysRoleMapper.roleMap" />
+	</resultMap>
+
+	<select id="selectAllUserAndRolesByUserId"
+		resultMap="userRoleListMapById">
+
+		select
+		u.id,u.user_name,u.user_password,u.user_email,u.user_info,u.head_img,u.create_time,
+
+		r.id role_id,r.role_name role_role_name,r.enabled
+		role_enabled,r.create_by role_create_by, r.create_time
+		role_create_time
+
+		from sys_user u INNER JOIN sys_user_role ur on u.id =
+		ur.user_id
+
+		INNER JOIN sys_role r on ur.role_id = r.id where u.id=#{id}
+
+	</select>
+
+
+
+	<!-- 3 .一对多的查询 ,查询用户所有的角色， 角色所对应的所以权限 -->
+
+
+
+	<resultMap type="com.wbd.spring.boot.entity.SysUser"
+		id="userRoleListMapPrivilege" extends="userMap">
+		<!-- 加上columnPrefix="role_"后，sql查询列必须加上这个role_ ,在result子标签中就可以不需要加前缀 -->
+		<collection property="roleList" columnPrefix="role_"
+			resultMap="com.spring.boot.ibatis.mapper.SysRoleMapper.rolePrivilegeListMap" />
+	</resultMap>
+
+	<select id="selectAllUserAndRolesAndPrivilege"
+		resultMap="userRoleListMapPrivilege">
+
+		select
+		u.id,u.user_name,u.user_password,u.user_email,u.user_info,u.head_img,u.create_time,
+
+		r.id role_id,r.role_name role_role_name,r.enabled
+		role_enabled,r.create_by role_create_by, r.create_time
+		role_create_time,
+
+		p.id role_privilege_id,p.privilege_name
+		role_privilege_privilege_name,p.privilege_url
+		role_privilege_privilege_url
+
+		from sys_user u
+		INNER JOIN sys_user_role ur
+		on u.id = ur.user_id
+		INNER JOIN sys_role r on ur.role_id = r.id
+		INNER
+		JOIN sys_role_privilege rp on rp.role_id = r.id
+		INNER JOIN
+		sys_privilege p on p.id=rp.privilege_id
+
+	</select>
+
+
+
+	<!-- 根据用户id查询对应的角色与权限信息 -->
+
+	<resultMap type="com.wbd.spring.boot.entity.SysUser"
+		id="userRoleListMapSelect" extends="userMap">
+		<!--column="{userId=id}" 将当前查询的u.id赋给userId，将userId作为参数在进行selectAllRoleByUserId查询  -->
+		<collection property="roleList" fetchType="lazy"
+			column="{userId=id}"
+			select="com.spring.boot.ibatis.mapper.SysRoleMapper.selectAllRoleByUserId">
+		</collection>
+	</resultMap>
+
+	<select id="selectUserRoleListMapSelect"
+		resultMap="userRoleListMapSelect">
+		select
+		u.id,u.user_name,u.create_time,u.user_password,u.user_info,u.head_img,u.user_email
+		from sys_user u where u.id=#{id}
+	</select>
+	
+	
+	<!-- 存储过程的调用 -->
+	
+	<!-- //1.根据用户id查询出对应的信息，返回值为空 -->
+	
+	<select id="selectUserByIdCallable"  statementType="CALLABLE" flushCache="false">
+	
+	<!-- 
+	1.statementType默认为STATEMENT,我们此时调用存储过程，所以需要修改为CALLABLE，
+	2.存储过程不支持mybaits的二级缓存，所以吧flushCache="false" 
+	3.该存储过程没有返回值，不能和出参混淆，所以改方法的返回值为void
+	4.采用javabean，存储过程中的入参和出参必须在javabean属性中存在
+	
+	 -->
+	 {call proc_selectUserById(
+	 #{id,mode=IN},
+	 #{userName,mode=OUT,jdbcType=VARCHAR},
+	 #{userPassword,mode=OUT,jdbcType=VARCHAR},
+	 #{userEmail,mode=OUT,jdbcType=VARCHAR},
+	 #{userInfo,mode=OUT,jdbcType=VARCHAR},
+	 #{headImg,mode=OUT,jdbcType=BLOB,javaType=_byte[]},
+	 #{createTime,mode=OUT,jdbcType=TIMESTAMP})
+	 }
+	</select>
+	
+	
+	<!-- //2.分页查询，参数采用map 返回值为集合 ,即resultMap，
+	
+	与上面的select的区别是， 第一个select没有返回值， 而这个定义了返回值
+	参数采用map,参数名称可以不需要和存储过程的参数名一致-->
+	
+	<select id="selectUserByIdCallableReturnList" flushCache="false" statementType="CALLABLE" resultMap="userMap">
+	
+	{call proc_selectUserPage(
+	
+	#{userName,mode=IN},
+	#{offset,mode=IN},
+	#{limit,mode=IN},
+	#{total,mode=OUT,jdbcType=BIGINT}
+	)}
+	
+	</select>
+	
+	
+	<!-- 3.插入 -->
+	
+	<insert id="insertUserAndRole" statementType="CALLABLE">
+	
+	{call proc_insertUserAndRoles(
+	#{user.id,mode=OUT,jdbcType=BIGINT},
+	#{user.createTime,mode=OUT,jdbcType=TIMESTAMP},
+	#{user.userName,mode=IN},
+	#{user.userPassword,mode=IN},
+	#{user.userEmail,mode=IN},
+	#{user.userInfo,mode=IN},
+	#{user.headImg,mode=IN,jdbcType=BLOB},
+	#{roleIds,mode=IN}
+	)
+	
+	}
+	</insert>
+	
+	
+	
+	<!-- 4.删除 -->
+	
+	<delete id="deleteUserAndRoleById" statementType="CALLABLE">
+	
+	{call proc_deleteUserById(
+	
+	  #{userId,mode=IN}
+	)
+	
+	}
+	
+	
+	</delete>
+	
 </mapper>

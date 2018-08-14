@@ -9,30 +9,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spring.boot.ibatis.mapper.SysUserMapper;
-import com.spring.boot.ibatis.mapper.UserMapper;
-import com.wbd.spring.boot.entity.SysUser;
 import com.wbd.spring.boot.entity.User;
+import com.wbd.spring.boot.service.UserService;
 /**
- * mybatis 注解方式
-* <p>Title: MyBatisUserController.java</p>  
+ * redis 操作
+* <p>Title: UserRedisController.java</p>  
 * <p>Description: </p>  
 * @author 朱光和 
-* @date 2018年8月1日
+* @date 2018年8月13日
  */
 @RestController
-public class MyBatisUserController {
+@RequestMapping("/redis")
+public class UserRedisController {
 	
 	@Autowired
-	private UserMapper um ;
+	private UserService us ;
 	
-	@Autowired
-	private SysUserMapper sum ;
+	
 	
 	@RequestMapping(value="/getUser/{userId}")  
     public User getUser(@PathVariable Integer userId) {  
         
-        return um.getById(userId);  
+        return us.findById(userId);  
     }  
       
 	/**
@@ -45,34 +43,23 @@ public class MyBatisUserController {
 	 */
     @RequestMapping(value="/saveUser",method = RequestMethod.POST,produces="application/json;charset=utf-8")  
     public String saveUser(@RequestBody User user) {  
-    	 um.save(user);  
+    	 us.createUser(user);  
     
     	return "result:"+user.getId();
     }  
-    /**
-     * 返回自增长ID,是返回到user对象， 而具体的insert方法执行之后还是返回的影响条数
-     * <p>Title: unSaveUser</p>  
-     * <p>Description: </p>  
-     * @param user
-     * @return
-     */
-    @RequestMapping(value="/unSaveUser",method = RequestMethod.POST,produces="application/json;charset=utf-8")  
-    public String unSaveUser(@RequestBody User user) {  
-    	 um.unSave(user);  
-    	return "result:"+user.getId();
-    } 
+   
     
     
     @RequestMapping(value="/updateUser",method = RequestMethod.POST,produces="application/json;charset=utf-8")  
     public String update(@RequestBody User user) {  
-    	 int result = um.updateUser(user);  
+    	 int result = us.updateUser(user);  
     	return "result:"+result;
     } 
     
     
     @RequestMapping(value="/deleteUser/{userId}")  
     public String delete(@PathVariable Long userId) {  
-    	 int result = um.deleteUser(userId);  
+    	 int result = us.delete(userId);  
     	return "result:"+result;
     } 
     
@@ -80,13 +67,10 @@ public class MyBatisUserController {
   
     @RequestMapping(value="/getAllUser" ,method = RequestMethod.GET) 
     public  List<User> getAllUser() {  
-        return um.getAll();  
+        return us.findAll();  
     }  
     
     
-    @RequestMapping(value="/getAllSysUser" ,method = RequestMethod.GET) 
-    public  List<SysUser> getAllSysUser() {  
-        return sum.selectAllSysUser();  
-    }  
+  
 
 }

@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * 用户表
  */
+@JsonIgnoreProperties(value = {"handler"})
 public class SysUser implements Serializable {
 	private static final long serialVersionUID = -328602757171077630L;
 	/**

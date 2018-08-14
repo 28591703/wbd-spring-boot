@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 /**
  * 角色表
  */
+@JsonIgnoreProperties(value = {"handler"})
 public class SysRole implements Serializable {
 	private static final long serialVersionUID = 6320941908222932112L;
 	/**

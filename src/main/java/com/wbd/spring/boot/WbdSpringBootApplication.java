@@ -7,11 +7,10 @@ import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 * <p>Description: </p>  
 * @author 朱光和 
 * @date 2018年7月28日
+* 
+* @RestController：表示该类为Controller，并且提供Rest接口，
+* 即所有接口的值以Json格式返回。
+* 该注解其实是@Controller和@ResponseBody的组合注解，便于我们开发Rest API。
+
+
  */
 @RestController
 @MapperScan(basePackages= {"com.spring.boot.ibatis.mapper"}) 

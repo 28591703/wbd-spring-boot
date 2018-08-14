@@ -3,9 +3,12 @@ package com.wbd.spring.boot.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * 创建信息
  */
+@JsonIgnoreProperties(value = {"handler"})
 public class CreateInfo implements Serializable {
 	private static final long serialVersionUID = 8275281589408844992L;
 	/**

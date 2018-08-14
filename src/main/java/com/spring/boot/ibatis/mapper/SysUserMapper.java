@@ -243,4 +243,85 @@ public interface SysUserMapper {
 	
 	
 	Integer insertBath (List<SysUser> userList);
+	
+	
+	
+	/***********************一对多查询******************/
+	
+	
+	/**
+	 * 1 。 一对多的查询  查询所有  角色信息
+	 * <p>Title: selectAllUserAndRoles</p>  
+	 * <p>Description: </p>  
+	 * @return
+	 */
+	List<SysUser> selectAllUserAndRoles();
+	
+	
+	
+	/**
+	 * 2. 一对多的查询  根据id查询 所有  角色信息
+	 * <p>Title: selectAllUserAndRoles</p>  
+	 * <p>Description: </p>  
+	 * @return
+	 */
+	List<SysUser> selectAllUserAndRolesByUserId(Long id);
+	
+	
+	/**
+	 * 3.一对多的查询  ,查询用户所有的角色， 角色所对应的所以权限
+	 * <p>Title: selectAllUserAndRolesAndPrivilege</p>  
+	 * <p>Description: </p>  
+	 * @return
+	 */
+	List<SysUser> selectAllUserAndRolesAndPrivilege();
+	
+	/**
+	 * 4利用用户id查询对应的角色和权限信息
+	 * <p>Title: selectUserRoleListMapSelect</p>  
+	 * <p>Description: </p>  
+	 * @param id
+	 * @return
+	 */
+	List<SysUser> selectUserRoleListMapSelect(Long id);
+	
+	
+	
+	/********************存储过程的调用****************/
+	
+	
+	//1.根据用户id查询出对应的信息 返回值为空，采用javabean，存储过程中的入参和出参必须在javabean属性中存在
+	
+	void selectUserByIdCallable(SysUser user);
+	
+	
+	/**
+	 * 2.分页查询，参数采用map,返回值为集合 ,即resultMap，
+	     与上面的select的区别是， 第一个select没有返回值， 而这个定义了返回值
+	   参数采用map,参数名称可以不需要和存储过程的参数名一致
+	 * <p>Title: selectUserByIdCallableReturnList</p>  
+	 * <p>Description: </p>  
+	 * @param params
+	 * @return
+	 */
+	List<SysUser> selectUserByIdCallableReturnList(Map<String, Object> params);
+	
+	/**
+	 * 3.插入 多个参数采用 @Param的形式
+	 * <p>Title: insertUserAndRole</p>  
+	 * <p>Description: </p>  
+	 * @param user
+	 * @param roleIds
+	 * @return
+	 */
+	int insertUserAndRole(@Param("user") SysUser user,@Param("roleIds") String roleIds);
+	
+	/**
+	 * 4.用户删除
+	 * <p>Title: deleteUserAndRoleById</p>  
+	 * <p>Description: </p>  
+	 * @param userId
+	 * @return
+	 */
+	int deleteUserAndRoleById(Long userId);
 }

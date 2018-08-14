@@ -2,9 +2,12 @@ package com.wbd.spring.boot.entity;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * 权限表
  */
+@JsonIgnoreProperties(value = {"handler"})//作用是json序列化时忽略bean中的一些属性序列化和反序列化时抛出的异常.
 public class SysPrivilege implements Serializable {
 	private static final long serialVersionUID = 6315662516417216377L;
 	/**

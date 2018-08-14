@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spring.boot.ibatis.mapper.SysPrivilegeMapper;
+import com.spring.boot.ibatis.mapper.SysRoleMapper;
 import com.spring.boot.ibatis.mapper.SysUserMapper;
+import com.wbd.spring.boot.entity.SysPrivilege;
 import com.wbd.spring.boot.entity.SysRole;
 import com.wbd.spring.boot.entity.SysUser;
 /**
@@ -29,6 +31,12 @@ public class SysUserController {
 	
 	@Autowired
 	private SysUserMapper sum ;
+	
+	@Autowired
+	private SysRoleMapper srm;
+	
+	@Autowired
+	private SysPrivilegeMapper spm;
 	
 	@RequestMapping(value="/getSysUser" ,method = RequestMethod.GET) 
     public  List<SysUser> getAllSysUser() {  
@@ -49,7 +57,7 @@ public class SysUserController {
 	@RequestMapping(value="/insertSysUser") 
     public Integer insertSysUser() {  
 		SysUser u  = new SysUser();
-		u.setId(119L);
+		u.setId(120L);
 		u.setUserName("朱光和");;
 		u.setUserEmail("285917033@qq.com");
 		u.setUserPassword("123456");
@@ -273,4 +281,186 @@ public class SysUserController {
 	}
 	
 	
+	/***********************一对多查询******************/
+	
+	/**
+	 * 1 。 一对多的查询  查询所有  角色信息
+	 * <p>Title: selectAllUserAndRoles</p>  
+	 * <p>Description: </p>  
+	 * @return
+	 */
+	@RequestMapping(value="/selectAllUserAndRoles")
+	List<SysUser> selectAllUserAndRoles(){
+		return sum.selectAllUserAndRoles();
+	}
+	
+	
+	/**
+	 * 2. 一对多的查询  根据id查询 所有  角色信息
+	 * <p>Title: selectAllUserAndRoles</p>  
+	 * <p>Description: </p>  
+	 * @return
+	 */
+	@RequestMapping(value="/selectAllUserAndRolesByUserId/{id}",method = RequestMethod.GET)
+	List<SysUser> selectAllUserAndRolesByUserId(@PathVariable Long id){
+		return sum.selectAllUserAndRolesByUserId(id);
+	}
+	
+	
+	
+	
+	/**
+	 * 3.一对多的查询  ,查询用户所有的角色， 角色所对应的所有权限
+	 * <p>Title: selectAllUserAndRoles</p>  
+	 * <p>Description: </p>  
+	 * @return
+	 */
+	@RequestMapping(value="/selectAllUserAndRolesAndPrivilege",method = RequestMethod.GET)
+	List<SysUser> selectAllUserAndRolesAndPrivilege(){
+		return sum.selectAllUserAndRolesAndPrivilege();
+	}
+	
+	
+	
+	/**
+	 * 4.一对多的查询  ,查询 角色所对应的所有权限
+	 * <p>Title: selectAllUserAndRoles</p>  
+	 * <p>Description: </p>  
+	 * @return
+	 */
+	@RequestMapping(value="/selectAllRoleAndPrivileges",method = RequestMethod.GET)
+	List<SysRole> selectAllRoleAndPrivileges(){
+		return srm.selectAllRoleAndPrivileges();
+	}
+	
+	
+	
+	/**
+	 * 5.一对多的查询  ,查询所有权限
+	 * <p>Title: selectAllUserAndRoles</p>  
+	 * <p>Description: </p>  
+	 * @return
+	 */
+	@RequestMapping(value="/selectAllPrivilege",method = RequestMethod.GET)
+	List<SysPrivilege> selectAllPrivilege(){
+		return spm.selectAllPrivilege();
+	}
+	
+	
+	
+	/**
+	 * 6.根据角色id查询对应的权限列表
+	 * <p>Title: selectAllPrivilegeByRoleId</p>  
+	 * <p>Description: </p>  
+	 * @param roleId
+	 * @return
+	 */
+	@RequestMapping(value="/selectAllPrivilegeByRoleId/{roleId}",method = RequestMethod.GET)
+	List<SysPrivilege> selectAllPrivilegeByRoleId(@PathVariable Long roleId){
+		return spm.selectAllPrivilegeByRoleId(roleId);
+	}
+	
+	
+	/**
+	 * 7.根据userid查询角色信息
+	 * <p>Title: selectAllRoleByUserId</p>  
+	 * <p>Description: </p>  
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value="/selectAllRoleByUserId/{userId}",method = RequestMethod.GET)
+	List<SysRole> selectAllRoleByUserId(@PathVariable Long userId){
+		return srm.selectAllRoleByUserId(userId);
+	}
+	
+	
+	
+	/**
+	 * 8 利用用户id查询对应的角色和权限信息
+	 * <p>Title: selectUserRoleListMapSelect</p>  
+	 * <p>Description: </p>  
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="/selectUserRoleListMapSelect/{id}",method = RequestMethod.GET)
+	List<SysUser> selectUserRoleListMapSelect(@PathVariable  Long id){
+		return sum.selectUserRoleListMapSelect(id);
+	}
+	
+	
+	
+/********************存储过程的调用****************/
+	
+	
+	//1.根据用户id查询出对应的信息 ，返回值为空
+	//采用javabean，存储过程中的入参和出参必须在javabean属性中存在
+	
+	
+	@RequestMapping(value="/selectUserByIdCallable/{userId}",method = RequestMethod.GET)
+	SysUser selectUserByIdCallable(@PathVariable  Long userId){
+		SysUser u = new SysUser ();
+		u.setId(userId);
+		sum.selectUserByIdCallable(u);
+		System.out.println(u.getUserName());
+		System.out.println(u.getUserEmail());
+		System.out.println(u.getUserPassword());
+		
+		return u;
+	}
+	
+	
+	
+	
+	/**
+	 * 2.分页查询，参数采用map
+	 * 返回值为集合 ,即resultMap，
+	     与上面的select的区别是， 第一个select没有返回值， 而这个定义了返回值
+	   参数采用map,参数名称可以不需要和存储过程的参数名一致
+	 * <p>Title: selectUserByIdCallableReturnList</p>  
+	 * <p>Description: </p>  
+	 * @param params
+	 * @return
+	 */
+	@RequestMapping(value="/selectUserByIdCallableReturnList",method = RequestMethod.GET)
+	List<SysUser> selectUserByIdCallableReturnList(){
+		Map<String, Object> params = new HashMap<String,Object>();
+		//设置存储过程需要传入的参数
+		params.put("userName", "a");
+		params.put("offset", "0");
+		params.put("limit", "5");
+		
+		List<SysUser> list = sum.selectUserByIdCallableReturnList(params);
+		//获取存过程返回的参数，通过map.get("key")查询
+		Long total = (Long) params.get("total");
+		System.out.println("总记录数====="+total);
+		return list;
+	}
+	
+	
+	/**
+	 * 3.插入 多个参数采用 @Param的形式
+	 * <p>Title: insertUserAndRole</p>  
+	 * <p>Description: </p>
+	 */
+	@RequestMapping(value="/insertUserAndRole",method = RequestMethod.GET)
+
+	void insertUserAndRole(){
+		
+		SysUser u = new SysUser ();
+		u.setUserName("proc");
+		u.setUserEmail("proc@qq.com");
+		u.setHeadImg(new byte[] {1,3,4,});
+		u.setUserInfo("proc test");
+		u.setUserPassword("123456");
+		String roleIds = "1,2";
+		
+		sum.insertUserAndRole(u, roleIds);
+		
+		System.out.println("id=="+u.getId());
+		System.out.println("创建时间=="+u.getCreateTime());
+		
+		int result = sum.deleteUserAndRoleById(u.getId());
+		
+		System.out.println("删除结果:"+result);
+	}
 }

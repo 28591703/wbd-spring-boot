@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+					"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 当mapper接口与xml文件关联的时候，namespace 必须指定接口的名称， 名称是包名加上接口的名称 -->
+<mapper
+	namespace="com.spring.boot.ibatis.mapper.SysPrivilegeMapper">
+
+	<resultMap type="com.wbd.spring.boot.entity.SysPrivilege"
+		id="privilegeMap">
+		<id property="id" column="id" />
+		<result property="privilegeName" column="privilege_name" />
+		<result property="privilegeUrl" column="privilege_url" />
+	</resultMap>
+
+	<!-- 查询所有权限信息 -->
+	<select id="selectAllPrivilege" resultMap="privilegeMap">
+		select p.id,p.privilege_name,p.privilege_url from sys_privilege p
+	</select>
+
+
+	<!-- 根据角色id查询权限信息 -->
+	<select id="selectAllPrivilegeByRoleId" resultMap="privilegeMap">
+		select p.id,p.privilege_name,p.privilege_url from sys_privilege p
+		INNER JOIN sys_role_privilege rp on p.id=rp.privilege_id
+		where rp.role_id=#{roleId}
+	</select>
+</mapper>

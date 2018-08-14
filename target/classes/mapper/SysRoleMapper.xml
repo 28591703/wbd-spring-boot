@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+					"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 当mapper接口与xml文件关联的时候，namespace 必须指定接口的名称， 名称是包名加上接口的名称 -->
+<mapper namespace="com.spring.boot.ibatis.mapper.SysRoleMapper">
+
+	<!-- roleMap -->
+	<resultMap type="com.wbd.spring.boot.entity.SysRole"
+		id="roleMap">
+		<id property="id" column="id" />
+		<result property="roleName" column="role_name" />
+        <result property="enabled" column="enabled" jdbcType="INTEGER" typeHandler="com.wbd.spring.boot.handler.EnabledTypeHandler"/>
+		<association property="createInfo"
+			javaType="com.wbd.spring.boot.entity.CreateInfo">
+			<result property="createBy" column="create_by" />
+			<result property="createTime" column="create_time"
+				jdbcType="TIMESTAMP" />
+		</association>
+		<!-- association 来替换 <result property="createBy" column="create_by" /> 
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP" /> -->
+	</resultMap>
+
+
+	<!-- roleMap 映射 角色所对应的权限 -->
+
+	<resultMap type="com.wbd.spring.boot.entity.SysRole"
+		id="rolePrivilegeListMap" extends="roleMap">
+		<collection property="privilegeList"
+			columnPrefix="privilege_"
+			resultMap="com.spring.boot.ibatis.mapper.SysPrivilegeMapper.privilegeMap" />
+	</resultMap>
+
+	<!-- 查询角色对应的权限 -->
+
+	<select id="selectAllRoleAndPrivileges"
+		resultMap="rolePrivilegeListMap">
+		select r.id,r.role_name,r.create_time,r.create_by,r.enabled,p.id
+		privilege_id, p.privilege_name privilege_privilege_name
+		,p.privilege_url privilege_privilege_url from sys_role r
+		INNER JOIN
+		sys_role_privilege rp on rp.role_id = r.id
+		INNER JOIN
+		sys_privilege p on
+		p.id = rp.privilege_id
+
+	</select>
+
+
+	<resultMap type="com.wbd.spring.boot.entity.SysRole"
+		id="rolePrivilegelistMapSelect" extends="roleMap">
+		<!-- column中的 roleId为 selectAllPrivilegeByRoleId接口的查询参数， id值为selectAllRoleByUserId方法 
+			根据用户id查询出来的角色id(r.id)， -->
+		<collection property="privilegeList" fetchType="lazy"
+			column="{roleId=id}"
+			select="com.spring.boot.ibatis.mapper.SysPrivilegeMapper.selectAllPrivilegeByRoleId" />
+	</resultMap>
+
+	<select id="selectAllRoleByUserId"
+		resultMap="rolePrivilegelistMapSelect">
+		select r.id,r.role_name,r.create_by,r.enabled,r.create_time from sys_role r
+		INNER JOIN sys_user_role ur
+		on r.id=ur.role_id
+		where ur.user_id=#{userId}
+
+	</select>
+	
+	
+	
+
+</mapper>

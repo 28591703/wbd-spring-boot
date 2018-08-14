@@ -1,5 +1,7 @@
 package com.spring.boot.ibatis.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
@@ -30,6 +32,14 @@ public interface UserMapper
 		@Result(property = "enable", column = "enabled")
 	})
 	public User getById(Integer userId);
+	
+	@Select("select id,role_name,enabled from sys_role")
+	@Results({
+		@Result(property = "id",  column = "id"), //id true表示表中的主键 ，唯一性
+		@Result(property = "roleName", column = "role_name"),
+		@Result(property = "enable", column = "enabled")
+	})
+	public List<User> getAll();
 	
 	/**
 	 * 返回自增主键
