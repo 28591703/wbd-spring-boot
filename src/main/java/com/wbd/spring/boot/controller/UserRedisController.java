@@ -1,7 +1,5 @@
 package com.wbd.spring.boot.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wbd.spring.boot.entity.User;
 import com.wbd.spring.boot.service.UserService;
+import com.wbd.spring.boot.utils.JSONResult;
 /**
  * redis 操作
 * <p>Title: UserRedisController.java</p>  
@@ -65,9 +64,10 @@ public class UserRedisController {
     
     
   
-    @RequestMapping(value="/getAllUser" ,method = RequestMethod.GET) 
-    public  List<User> getAllUser() {  
-        return us.findAll();  
+    @RequestMapping(value="/getAllUser" ,method = RequestMethod.GET,produces="application/json;charset=UTF-8") 
+    public  String  getAllUser() {  
+    	
+        return JSONResult.fillResultString(1,"succcess",us.findAll());  
     }  
     
     

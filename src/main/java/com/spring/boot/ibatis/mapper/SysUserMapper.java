@@ -324,4 +324,20 @@ public interface SysUserMapper {
 	 * @return
 	 */
 	int deleteUserAndRoleById(Long userId);
+	
+	
+	
+	
+	
+	/********************Security****************/
+	
+	
+	/**
+	 * 根据用户名查询用户的信息，包括角色信息
+	 * <p>Title: selectUserByName</p>  
+	 * <p>Description: </p>  
+	 * @param userName
+	 * @return
+	 */
+	SysUser selectUserByName(String userName);
 }

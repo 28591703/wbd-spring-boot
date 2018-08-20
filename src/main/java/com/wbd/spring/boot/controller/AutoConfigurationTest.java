@@ -19,6 +19,7 @@ public class AutoConfigurationTest extends WebMvcConfigurerAdapter {
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 		registry.addViewController("/test").setViewName("test");
+		registry.addViewController("/login").setViewName("login");
 	}
 
 }

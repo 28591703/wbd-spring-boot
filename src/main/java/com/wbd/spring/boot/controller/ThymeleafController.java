@@ -20,7 +20,7 @@ import com.wbd.spring.boot.beans.Person;
 @Controller
 public class ThymeleafController {
 	
-	@RequestMapping("/")
+	@RequestMapping("/a")
 	public String index(Model model) {
 		List<Person> lp =new ArrayList<Person>();
 		

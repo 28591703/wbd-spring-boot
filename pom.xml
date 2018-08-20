@@ -66,12 +66,12 @@
             <version>2.2.4</version>
         </dependency>
         
+		
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		
 		
 		<!--pagehelper -->
 		 <dependency>
@@ -87,9 +87,17 @@
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 
-		<!-- oracle -->
+		<!-- security -->
 
+             <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
 
+            <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity4</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
